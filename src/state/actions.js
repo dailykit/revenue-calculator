@@ -5,7 +5,7 @@ export const nextStage = (payload) => {
     }
 }
 
-export const nextStage = () => {
+export const reset = () => {
     return {
         type : 'RESET'
     }

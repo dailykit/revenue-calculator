@@ -1,5 +1,5 @@
 const initialState = {
-    stage : 2,
+    stage : 1,
     sub_stage : 0
 }
 
