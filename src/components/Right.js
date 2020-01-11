@@ -7,7 +7,7 @@ import { nextSubStage } from '../state/actions';
 const Right = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage } = useSelector(state => state);
+    const { sub_stage, last_stage } = useSelector(state => state);
 
     return (
         <Style sub_stage={ sub_stage + 1 }>
@@ -16,12 +16,12 @@ const Right = () => {
                 <span> Your Earnings </span>
                 <span> Key to start </span>
             </header>
-            <main>
+            <main hidden={ sub_stage !== 0 }>
                 <h1> Revenue Calculator </h1>
                 <p> Find out how much you can grow your reveue by adding meal kits </p>
             </main>
             <footer>
-                <button onClick={ () => dispatch(nextSubStage()) }>Next</button>
+                <button hidden={ sub_stage === last_stage } onClick={ () => dispatch(nextSubStage()) }>Next</button>
             </footer>
         </Style>
     );
@@ -45,6 +45,7 @@ const Style = styled.div(
         span {
             font-size: 14px;
             color: #1d2b44;
+            padding: 5px 0;
         
             &:nth-child(${ sub_stage }) {
                 font-weight: bold;
@@ -82,6 +83,7 @@ const Style = styled.div(
             }
         }
     }
+
 
     `
 )

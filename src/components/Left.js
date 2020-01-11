@@ -1,14 +1,30 @@
 import React from 'react';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+
+import { reset } from '../state/actions';
 
 const Left = () => {
 
+    const dispatch = useDispatch();
+    const { sub_stage } = useSelector(state => state);
+
+    // Screen 1
     const [capacity, setCapacity] = React.useState(300);
     const [utilization, setUtilization] = React.useState(300);
     const [revenue, setRevenue] = React.useState('150');
     const [revenueOptions] = React.useState(['100', '150', '200', '250', '500', '750', '1 M']);
     const [profit, setProfit] = React.useState(-10);
     const [profitOptions] = React.useState([-20, -10, 0, 10, 20, 30, 40]);
+
+    // Screen 2
+    const [decide, setDecide] = React.useState(true);
+    const [price, setPrice] = React.useState(200);
+    const [priceOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
+    const [mealKitsPerDay, setMealKitsPerDay] = React.useState(200);
+    const [mealKitsPerDayOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
+    const [recommendedPrice, setRecommendedPrice] = React.useState(2);
+    const [recommendedPriceOptions] = React.useState([2, 6, 10, 12, 15, 20, 30]);
 
     const handleIncrement = (name) => {
         switch(name) {
@@ -23,6 +39,27 @@ const Left = () => {
                 const index = profitOptions.indexOf(profit);
                 if (index != profitOptions.length - 1) {
                     setProfit(profitOptions[index + 1]);
+                }
+                break;
+            }
+            case 'price': {
+                const index = priceOptions.indexOf(price);
+                if (index != priceOptions.length - 1 && decide) {
+                    setPrice(priceOptions[index + 1]);
+                }
+                break;
+            }
+            case 'meal_kits_per_day': {
+                const index = mealKitsPerDayOptions.indexOf(mealKitsPerDay);
+                if (index != mealKitsPerDayOptions.length - 1 && decide) {
+                    setMealKitsPerDay(mealKitsPerDayOptions[index + 1]);
+                }
+                break;
+            }
+            case 'recommended_price': {
+                const index = recommendedPriceOptions.indexOf(recommendedPrice);
+                if (index != recommendedPriceOptions.length - 1 && decide) {
+                    setRecommendedPrice(recommendedPriceOptions[index + 1]);
                 }
                 break;
             }
@@ -46,6 +83,27 @@ const Left = () => {
                 }
                 break;
             }
+            case 'price': {
+                const index = priceOptions.indexOf(price);
+                if (index != 0 && decide) {
+                    setPrice(priceOptions[index - 1]);
+                }
+                break;
+            }
+            case 'meal_kits_per_day': {
+                const index = mealKitsPerDayOptions.indexOf(mealKitsPerDay);
+                if (index != 0 && decide) {
+                    setMealKitsPerDay(mealKitsPerDayOptions[index - 1]);
+                }
+                break;
+            }
+            case 'recommended_price': {
+                const index = recommendedPriceOptions.indexOf(recommendedPrice);
+                if (index != 0 && decide) {
+                    setRecommendedPrice(recommendedPriceOptions[index - 1]);
+                }
+                break;
+            }
             default: return;
         }
     }
@@ -53,9 +111,11 @@ const Left = () => {
     return (
         <Style>
             <header>
-                <button> <i class="fas fa-circle-notch"></i> Start again </button>
+                <button onClick={ () => dispatch(reset()) }> <i class="fas fa-circle-notch"></i> Start again </button>
             </header>
-            <div className="sub-stage">
+
+            {/* Screen 1 */}
+            <div className="sub-stage" hidden={ sub_stage !== 0 }>
                 <div className="row">
                     <div className="upper"> 
                         <div className="question">What's your available capacity?</div>
@@ -126,6 +186,78 @@ const Left = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Screen 2 */}
+            <div className="sub-stage" hidden={ sub_stage !== 1 }>
+                <div className="row">
+                    <div className="upper"> 
+                        <div className="question">Your estimated price of ready to eat per serving:</div>
+                        <div className="selector">
+                            <i className={ sub_stage === 1 && !decide ? 'fas fa-minus hide' : 'fas fa-minus' } onClick={ () => handleDecrement('price') } />
+                            <span >
+                                ${ price }
+                            </span> 
+                            <i className={ sub_stage === 1 && !decide ? 'fas fa-plus hide' : 'fas fa-plus' } onClick={ () => handleIncrement('price') } />
+                        </div>
+                    </div>
+                    <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
+                        <div className="radio-group">
+                            {
+                                priceOptions.map(op => <span className={ op == price ? 'active' : '' } onClick={ () => setPrice(op) }>{ op }</span>)
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="upper"> 
+                        <div className="question">Number of meal kits per day:</div>
+                        <div className="selector">
+                            <i className={ sub_stage === 1 && !decide ? 'fas fa-minus hide' : 'fas fa-minus' } onClick={ () => handleDecrement('meal_kits_per_day') } />
+                            <span >
+                                { mealKitsPerDay }
+                            </span> 
+                            <i className={ sub_stage === 1 && !decide ? 'fas fa-plus hide' : 'fas fa-plus' } onClick={ () => handleIncrement('meal_kits_per_day') } />
+                        </div>
+                    </div>
+                    <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
+                        <div className="radio-group">
+                            {
+                                mealKitsPerDayOptions.map(op => <span className={ op == mealKitsPerDay ? 'active' : '' } onClick={ () => setMealKitsPerDay(op) }>{ op }</span>)
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="upper"> 
+                        <div className="question">Recommended Price of meal kit per serving:</div>
+                        <div className="selector">
+                            <i className={ sub_stage === 1 && !decide ? 'fas fa-minus hide' : 'fas fa-minus' } onClick={ () => handleDecrement('recommended_price') } />
+                            <span >
+                                ${ recommendedPrice }
+                            </span> 
+                            <i className={ sub_stage === 1 && !decide ? 'fas fa-plus hide' : 'fas fa-plus' } onClick={ () => handleIncrement('recommended_price') } />
+                        </div>
+                    </div>
+                    <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
+                        <div className="radio-group">
+                            {
+                                recommendedPriceOptions.map(op => <span className={ op == recommendedPrice ? 'active' : '' } onClick={ () => setRecommendedPrice(op) }>{ op }</span>)
+                            }
+                        </div>
+                        <div className="help-text">
+                            The price of meal kit will depend on several factors, including the food cost, brand premium, delivery service etc.
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="toggle">
+                            <span> Decide Yourself </span>
+                            <span className="toggle-bg">
+                                <span className={ decide ? 'toggle-btn active' : 'toggle-btn' } onClick={ () => setDecide(!decide) }></span>
+                            </span>
+                    </div>
+                </div>
+            </div>
         </Style>
     );
 }
@@ -182,7 +314,7 @@ const Style = styled.div`
                 -moz-user-select: none; /* Old versions of Firefox */
                 -ms-user-select: none; /* Internet Explorer/Edge */
                 user-select: none;
-                
+
                 i {
                     margin: 0 25px;
                     opacity: 0.7;
@@ -190,6 +322,13 @@ const Style = styled.div`
                     &:hover {
                         opacity: 1;
                         cursor: pointer;
+                    }
+
+                    &.hide {
+                        &:hover {
+                            cursor: default;
+                            opacity: 0.7;
+                        }
                     }
                 }
             }
@@ -256,6 +395,55 @@ const Style = styled.div`
 
                 &.red-green {
                     background: linear-gradient(to right, #9d3d3d 43%, #53c03b 98%);
+                }
+            }
+
+            &.disabled {
+                opacity: 0.5;
+                pointer-events: none;
+            }
+
+            .help-text {
+                font-size: 12px;
+                font-weight: 300;
+                font-style: italic;
+                color: #ebebeb;
+                margin-top: 10px;
+            }
+        }
+
+        .toggle {
+            position: relative;
+            color: #8ac03b;
+            text-transform: uppercase;
+            text-align: center;
+
+            .toggle-bg {
+                position: absolute;
+                height: 3px;
+                width: 30px;
+                background: #8ac03b;
+                top: 50%;
+                transform: translateY(-50%);
+                margin-left: 20px;
+
+                .toggle-btn {
+                    transition: .2s ease;
+                    position: absolute;
+                    height: 20px;
+                    width: 20px;
+                    border-radius: 50%;
+                    background: #c3c3c3;
+                    transform: translateY(-40%);
+                    left: -20%;
+
+                    &:hover {
+                        cursor: pointer;
+                    }
+
+                    &.active {
+                        left: 60%;
+                    }
                 }
             }
         }
