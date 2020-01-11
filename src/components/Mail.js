@@ -4,6 +4,7 @@ import styled from 'styled-components';
 const Mail = () => {
     return (
         <Style>
+            <i class="far fa-paper-plane"></i>
             <h2>Mail Sent!</h2>
             <p className="help-text">Please check your spam incase you don't find it.</p>
             <p>Thank you for your time! <br /> We look forward to help you with your queries.</p>
@@ -24,6 +25,10 @@ const Style = styled.div`
     align-items: center;
     flex-direction: column;
     color: #cecece;
+
+    i {
+        font-size: 3rem;
+    }
 
     h2 {
         font-size: 48px;

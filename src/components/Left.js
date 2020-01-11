@@ -18,7 +18,7 @@ const Left = () => {
     const [profitOptions] = React.useState([-20, -10, 0, 10, 20, 30, 40]);
 
     // Screen 2
-    const [decide, setDecide] = React.useState(true);
+    const [decide, setDecide] = React.useState(false);
     const [price, setPrice] = React.useState(200);
     const [priceOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
     const [mealKitsPerDay, setMealKitsPerDay] = React.useState(200);

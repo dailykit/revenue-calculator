@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { nextSubStage } from '../state/actions';
+import { nextSubStage, nextStage } from '../state/actions';
 
 const Right = () => {
 
@@ -22,6 +22,7 @@ const Right = () => {
             </main>
             <footer>
                 <button hidden={ sub_stage === last_stage } onClick={ () => dispatch(nextSubStage()) }>Next</button>
+                <button hidden={ sub_stage !== last_stage } onClick={ () => dispatch(nextStage()) }>Email me Report</button>
             </footer>
         </Style>
     );
