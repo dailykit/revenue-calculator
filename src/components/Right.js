@@ -7,7 +7,7 @@ import { nextSubStage, nextStage } from '../state/actions';
 const Right = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage, last_stage } = useSelector(state => state);
+    const { sub_stage, last_stage, phase } = useSelector(state => state);
 
     return (
         <Style sub_stage={ sub_stage + 1 }>
@@ -44,6 +44,88 @@ const Right = () => {
                         </tr>
                     </tbody>
                 </table>
+            </main>
+            <main hidden={ sub_stage !== 2 }>
+                <div className={ phase === 1 ? 'tile active' : 'tile' }>
+                    <div className="tile-left">
+                        <span className="tile-small"> Start with </span>
+                        <span className="tile-large"> Pilot </span>
+                    </div>
+                    <div className="tile-right">
+                        <span className="tile-small"> target achieved: 10-15% </span>
+                        <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                    </div>
+                </div>
+                <div className={ phase === 2 ? 'tile active' : 'tile' }>
+                    <div className="tile-left">
+                        <span className="tile-small"> Start with </span>
+                        <span className="tile-large"> Pilot </span>
+                    </div>
+                    <div className="tile-right">
+                        <span className="tile-small"> target achieved: 10-15% </span>
+                        <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                    </div>
+                </div>
+                <div className={ phase === 3 ? 'tile active' : 'tile' }>
+                    <div className="tile-left">
+                        <span className="tile-small"> Start with </span>
+                        <span className="tile-large"> Pilot </span>
+                    </div>
+                    <div className="tile-right">
+                        <span className="tile-small"> target achieved: 10-15% </span>
+                        <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                    </div>
+                </div>
+                <div className={ phase === 1 ? 'content active' : 'content' }>
+                    <div className="required">
+                        <h5>Required: </h5>
+                        <ol>
+                            <li>Zero Capital</li>
+                            <li>No extra space or Hardware</li>
+                            <li>DailyKit Software</li>
+                        </ol>
+                    </div>
+                    <div className="outcome">
+                        <h5>At the end of Phase 1, you would have: </h5>
+                        <ol>
+                            <li>Introduced your Meal Kit services to your customers</li>
+                            <li>Achieved social media marketing buzz</li>
+                            <li>Started a Meal Kit Menu</li>
+                            <li>Achieved Word of Mouth Marketing</li>
+                            <li>Traffic to your website</li>
+                        </ol>
+                    </div>
+                </div>
+                <div className={ phase === 2 ? 'content active' : 'content' }>
+                    <div className="required">
+                        <h5>Required: </h5>
+                        <ol>
+                            <li>DailyKit Software</li>
+                        </ol>
+                    </div>
+                    <div className="outcome">
+                        <h5>At the end of Phase 2, you would have: </h5>
+                        <ol>
+                            <li>Introduced your Meal Kit services to your customers</li>
+                            <li>Traffic to your website</li>
+                        </ol>
+                    </div>
+                </div>
+                <div className={ phase === 3 ? 'content active' : 'content' }>
+                    <div className="required">
+                        <h5>Required: </h5>
+                        <ol>
+                            <li>Zero Capital</li>
+                            <li>DailyKit Software</li>
+                        </ol>
+                    </div>
+                    <div className="outcome">
+                        <h5>At the end of Phase 3, you would have: </h5>
+                        <ol>
+                            <li>Introduced your Meal Kit services to your customers</li>
+                        </ol>
+                    </div>
+                </div>
             </main>
             <footer>
                 <button hidden={ sub_stage === last_stage } onClick={ () => dispatch(nextSubStage()) }>Next</button>
@@ -82,7 +164,8 @@ const Style = styled.div(
 
     main {
         color: #1d2b44;
-        
+        flex: 1;
+
         h1 {
             font-size: 48px;
             margin-bottom: 20px;
@@ -139,6 +222,57 @@ const Style = styled.div(
                 &:nth-child(2n) {
                     background: #ebebeb;
                 }
+            }
+        }
+
+        .tile {
+            padding: 20px 0;
+            display: none;
+            justify-content: space-between;
+            margin-top: 10px;
+            color: #1d2b44;
+
+            .tile-left, .tile-right {
+                display: flex;
+                flex-direction: column;
+
+                .tile-small {
+                    font-size: 14px;
+                    margin-bottom: 10px;
+                }
+
+                .tile-large {
+                    font-weight: 500;
+                    font-size: 24px;
+                }
+            }
+
+            &.active {
+                display: flex;
+            }
+        }
+
+        .content {
+            display: none;
+            color: 1d2b44;
+
+            h5 {
+                font-size: 20px;
+                font-weight: normal;
+                margin-bottom: 5px;
+            }
+
+            ol {
+                padding-left: 20px;
+                margin-bottom: 20px;
+
+                li {
+                    font-size: 18px;
+                }
+            }
+
+            &.active {
+                display: block;
             }
         }
     }
