@@ -1,14 +1,18 @@
-export const nextStage = (payload) => {
+export const nextStage = () => {
     return {
         type : 'NEXT_STAGE',
-        payload
     }
 }
 
-export const nextSubStage = (payload) => {
+export const nextSubStage = () => {
     return {
-        type : 'NEXT_SUB_STAGE',
-        payload
+        type : 'NEXT_SUB_STAGE'
+    }
+}
+
+export const prevSubStage = () => {
+    return {
+        type : 'PREV_SUB_STAGE'
     }
 }
 
@@ -18,9 +22,9 @@ export const reset = () => {
     }
 }
 
-export const changePhase = (payload) => {
+export const changeValue = (payload) => {
     return {
-        type : 'CHANGE_PHASE',
+        type : 'CHANGE_VALUE',
         payload
     }
 }

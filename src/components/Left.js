@@ -2,66 +2,81 @@ import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { reset, changePhase } from '../state/actions';
+import { reset, changeValue } from '../state/actions';
 
 const Left = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage, last_stage, phase } = useSelector(state => state);
+    const { sub_stage, last_stage, phase, capacity, utilization, revenue, profit, price, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
+
+    const changeValueHandler = (name, value) => {
+        switch(name) {
+            case 'capacity': {
+                dispatch(changeValue({ [name] : value, mealKitsPerDay : Math.floor(value/2) }));
+                break;
+            }
+            case 'revenue': {
+                dispatch(changeValue({ [name] : value, price : (value/365).toFixed(2) }));
+                break;
+            }
+            case 'profit': {
+                dispatch(changeValue({ [name] : value, recommendedPrice : value > 0 ? price : (price - (0.15 * price)).toFixed(2) }));
+                break;
+            }
+            case 'price': {
+                dispatch(changeValue({ [name] : value, recommendedPrice : profit > 0 ? value : (value - (0.15 * value)).toFixed(2) }));
+                break;
+            }
+            default:
+                dispatch(changeValue({ [name] : value }));
+        }
+    }
 
     // Screen 1
-    const [capacity, setCapacity] = React.useState(300);
-    const [utilization, setUtilization] = React.useState(300);
-    const [revenue, setRevenue] = React.useState('150');
-    const [revenueOptions] = React.useState(['100', '150', '200', '250', '500', '750', '1 M']);
-    const [profit, setProfit] = React.useState(-10);
+    const [revenueOptions] = React.useState([100, 150, 200, 250, 500, 750, 1000]);
     const [profitOptions] = React.useState([-20, -10, 0, 10, 20, 30, 40]);
 
     // Screen 2
     const [decide, setDecide] = React.useState(false);
-    const [price, setPrice] = React.useState(200);
     const [priceOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
-    const [mealKitsPerDay, setMealKitsPerDay] = React.useState(200);
-    const [mealKitsPerDayOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
-    const [recommendedPrice, setRecommendedPrice] = React.useState(2);
+    const [mealKitsPerDayOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);    
     const [recommendedPriceOptions] = React.useState([2, 6, 10, 12, 15, 20, 30]);
-
+    
     // Screen 3
-
     const handleIncrement = (name) => {
         switch(name) {
             case 'revenue': {
                 const index = revenueOptions.indexOf(revenue);
                 if (index != revenueOptions.length - 1) {
-                    setRevenue(revenueOptions[index + 1]);
+                    changeValueHandler('revenue', revenueOptions[index + 1]);
                 }
                 break;
             }
             case 'profit': {
                 const index = profitOptions.indexOf(profit);
                 if (index != profitOptions.length - 1) {
-                    setProfit(profitOptions[index + 1]);
+                    changeValueHandler('profit', profitOptions[index + 1]);
                 }
                 break;
             }
             case 'price': {
                 const index = priceOptions.indexOf(price);
                 if (index != priceOptions.length - 1 && decide) {
-                    setPrice(priceOptions[index + 1]);
+                    changeValueHandler('price' , priceOptions[index + 1]);
                 }
                 break;
             }
             case 'meal_kits_per_day': {
                 const index = mealKitsPerDayOptions.indexOf(mealKitsPerDay);
                 if (index != mealKitsPerDayOptions.length - 1 && decide) {
-                    setMealKitsPerDay(mealKitsPerDayOptions[index + 1]);
+                    changeValueHandler('mealKitsPerDay', mealKitsPerDayOptions[index + 1]);
                 }
                 break;
             }
             case 'recommended_price': {
                 const index = recommendedPriceOptions.indexOf(recommendedPrice);
                 if (index != recommendedPriceOptions.length - 1 && decide) {
-                    setRecommendedPrice(recommendedPriceOptions[index + 1]);
+                    changeValueHandler('recommendedPrice' , recommendedPriceOptions[index + 1]);
                 }
                 break;
             }
@@ -74,35 +89,35 @@ const Left = () => {
             case 'revenue': {
                 const index = revenueOptions.indexOf(revenue);
                 if (index != 0) {
-                    setRevenue(revenueOptions[index - 1]);
+                    changeValueHandler('revenue', revenueOptions[index - 1]);
                 }
                 break;
             }
             case 'profit': {
                 const index = profitOptions.indexOf(profit);
                 if (index != 0) {
-                    setProfit(profitOptions[index - 1]);
+                    changeValueHandler('profit', profitOptions[index - 1]);
                 }
                 break;
             }
             case 'price': {
                 const index = priceOptions.indexOf(price);
                 if (index != 0 && decide) {
-                    setPrice(priceOptions[index - 1]);
+                    changeValueHandler('price' , priceOptions[index - 1]);
                 }
                 break;
             }
             case 'meal_kits_per_day': {
                 const index = mealKitsPerDayOptions.indexOf(mealKitsPerDay);
                 if (index != 0 && decide) {
-                    setMealKitsPerDay(mealKitsPerDayOptions[index - 1]);
+                    changeValueHandler('mealKitsPerDay', mealKitsPerDayOptions[index - 1]);
                 }
                 break;
             }
             case 'recommended_price': {
                 const index = recommendedPriceOptions.indexOf(recommendedPrice);
                 if (index != 0 && decide) {
-                    setRecommendedPrice(recommendedPriceOptions[index - 1]);
+                    changeValueHandler('recommendedPrice' , recommendedPriceOptions[index - 1]);
                 }
                 break;
             }
@@ -120,33 +135,33 @@ const Left = () => {
             <div className="sub-stage" hidden={ sub_stage !== 0 }>
                 <div className="row">
                     <div className="upper"> 
-                        <div className="question">What's your available capacity?</div>
+                        <div className="question">How many customers can you serve per day?</div>
                         <div className="selector">
-                            <i class="fas fa-minus" onClick={ () => { capacity < 50 ? setCapacity(0) : setCapacity(capacity - 50) } } />
+                            <i class="fas fa-minus" onClick={ () => { capacity < 50 ? changeValueHandler('capacity', 0) : changeValueHandler('capacity', capacity - 50) } } />
                             <span >
                                 { capacity } servings
                             </span> 
-                            <i class="fas fa-plus" onClick={ () => { capacity > 450 ? setCapacity(500) : setCapacity(capacity + 50) } } />
+                            <i class="fas fa-plus" onClick={ () => { capacity > 450 ? changeValueHandler('capacity', 500) : changeValueHandler('capacity', capacity + 50) } } />
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="500" value="300" class="slider" value={ capacity } onChange={ e => setCapacity(parseInt(e.target.value))}/>
+                        <input type="range" min="0" step="10" max="500" value="300" class="slider" value={ capacity } onChange={ e => changeValueHandler( 'capacity', parseInt(e.target.value))}/>
                     </div>
                 </div>
                 <div className="row">
                     <div className="upper"> 
-                        <div className="question">Available capacity utilization?</div>
+                        <div className="question">How many customers are you serving today?</div>
                         <div className="selector">
-                            <i class="fas fa-minus" onClick={ () => { utilization < 50 ? setUtilization(0) : setUtilization(utilization - 50) } } />
+                            <i class="fas fa-minus" onClick={ () => { utilization < 50 ? changeValueHandler( 'utilization', 0) : changeValueHandler( 'utilization', utilization - 50) } } />
                             <span >
                                 { utilization } servings
                             </span> 
-                            <i class="fas fa-plus" onClick={ () => { utilization > 450 ? setUtilization(500) : setUtilization(utilization + 50) } } />
+                            <i class="fas fa-plus" onClick={ () => { utilization > 450 ? changeValueHandler( 'utilization', 500) : changeValueHandler( 'utilization', utilization + 50) } } />
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="500" value="300" class="slider red-green" value={ utilization } onChange={ e => setUtilization(parseInt(e.target.value))}/>
-                        <span className="utilization"> 70% utilization </span>
+                        <input type="range" min="0" step="10" max="500" value="300" class="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
+                        <span className="utilization"> { Math.floor((utilization / capacity) * 100) }% utilization </span>
                     </div>
                 </div>
                 <div className="row">
@@ -155,7 +170,7 @@ const Left = () => {
                         <div className="selector">
                             <i class="fas fa-minus" onClick={ () => handleDecrement('revenue') } />
                             <span >
-                                ${ revenue } <span hidden={ revenue === '1 M' }>k</span>
+                                ${ revenue === 1000? '1 M' : revenue + 'k' } 
                             </span> 
                             <i class="fas fa-plus" onClick={ () => handleIncrement('revenue') } />
                         </div>
@@ -163,7 +178,7 @@ const Left = () => {
                     <div className="lower">
                         <div className="radio-group">
                             {
-                                revenueOptions.map(op => <span className={ op == revenue ? 'active' : '' } onClick={ () => setRevenue(op) }>{ op }</span>)
+                                revenueOptions.map(op => <span className={ op == revenue ? 'active' : '' } onClick={ () => changeValueHandler( 'revenue', op) }>{ op === 1000 ? '1 M' : op }</span>)
                             }
                         </div>
                     </div>
@@ -182,7 +197,7 @@ const Left = () => {
                     <div className="lower">
                         <div className="radio-group red-green">
                             {
-                                profitOptions.map(op => <span className={ op == profit ? 'active' : '' } onClick={ () => setProfit(op) }>{ op }</span>)
+                                profitOptions.map(op => <span className={ op == profit ? 'active' : '' } onClick={ () => changeValueHandler( 'profit', op) }>{ op }</span>)
                             }
                         </div>
                     </div>
@@ -205,7 +220,7 @@ const Left = () => {
                     <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
                         <div className="radio-group">
                             {
-                                priceOptions.map(op => <span className={ op == price ? 'active' : '' } onClick={ () => setPrice(op) }>{ op }</span>)
+                                priceOptions.map(op => <span className={ op == price ? 'active' : '' } onClick={ () => changeValueHandler( 'price', op) }>{ op }</span>)
                             }
                         </div>
                     </div>
@@ -224,7 +239,7 @@ const Left = () => {
                     <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
                         <div className="radio-group">
                             {
-                                mealKitsPerDayOptions.map(op => <span className={ op == mealKitsPerDay ? 'active' : '' } onClick={ () => setMealKitsPerDay(op) }>{ op }</span>)
+                                mealKitsPerDayOptions.map(op => <span className={ op == mealKitsPerDay ? 'active' : '' } onClick={ () => changeValueHandler( 'mealKitsPerDay', op) }>{ op }</span>)
                             }
                         </div>
                     </div>
@@ -243,7 +258,7 @@ const Left = () => {
                     <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
                         <div className="radio-group">
                             {
-                                recommendedPriceOptions.map(op => <span className={ op == recommendedPrice ? 'active' : '' } onClick={ () => setRecommendedPrice(op) }>{ op }</span>)
+                                recommendedPriceOptions.map(op => <span className={ op == recommendedPrice ? 'active' : '' } onClick={ () => changeValueHandler( 'recommendedPrice', op) }>{ op }</span>)
                             }
                         </div>
                         <div className="help-text">
@@ -269,7 +284,7 @@ const Left = () => {
                 <div className="row mt-2">
                     <div className="stat">
                         <div className="title">
-                            Number of mealkits to do
+                            Number of meal kits to do
                         </div>
                         <div className="line">
                             ---------------------------------
@@ -327,7 +342,7 @@ const Left = () => {
                     <div className="title">
                         We recommend a phase wise approach:
                     </div>
-                    <div className={ phase === 1 ? 'tile active' : 'tile' } onClick={ () => dispatch(changePhase({ phase : 1 })) }>
+                    <div className={ phase === 1 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 1 ) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 1 </span>
                             <span className="tile-large"> Pilot </span>
@@ -337,7 +352,7 @@ const Left = () => {
                             <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
-                    <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => dispatch(changePhase({ phase : 2 })) }>
+                    <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 2 ) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 2 </span>
                             <span className="tile-large"> Pilot </span>
@@ -347,7 +362,7 @@ const Left = () => {
                             <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
-                    <div className={ phase === 3 ? 'tile active' : 'tile' } onClick={ () => dispatch(changePhase({ phase : 3 })) }>
+                    <div className={ phase === 3 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 3 ) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 3 </span>
                             <span className="tile-large"> Pilot </span>

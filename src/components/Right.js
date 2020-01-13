@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 import { useSelector, useDispatch } from 'react-redux';
 
-import { nextSubStage, nextStage } from '../state/actions';
+import { nextSubStage, nextStage, prevSubStage } from '../state/actions';
 
 const Right = () => {
 
@@ -18,7 +18,7 @@ const Right = () => {
             </header>
             <main hidden={ sub_stage !== 0 }>
                 <h1> Revenue Calculator </h1>
-                <p> Find out how much you can grow your reveue by adding meal kits </p>
+                <p> Find out how much more revenue Meal Kits can add to your Restaurant </p>
             </main>
             <main hidden={ sub_stage !== 1 }>
                 <h2> Your earnings: </h2>
@@ -128,6 +128,7 @@ const Right = () => {
                 </div>
             </main>
             <footer>
+                <button hidden={ sub_stage === 0 } onClick={ () => dispatch(prevSubStage()) }>Back</button>
                 <button hidden={ sub_stage === last_stage } onClick={ () => dispatch(nextSubStage()) }>Next</button>
                 <button hidden={ sub_stage !== last_stage } onClick={ () => dispatch(nextStage()) }>Email me Report</button>
             </footer>
@@ -279,6 +280,8 @@ const Style = styled.div(
 
     footer {
         align-self: flex-end;
+        display: flex;
+        justify-content: space-between;
 
         button {
             padding: 13px 50px;
