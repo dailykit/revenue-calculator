@@ -17,3 +17,10 @@ export const reset = () => {
         type : 'RESET'
     }
 }
+
+export const changePhase = (payload) => {
+    return {
+        type : 'CHANGE_PHASE',
+        payload
+    }
+}

@@ -2,12 +2,12 @@ import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { reset } from '../state/actions';
+import { reset, changePhase } from '../state/actions';
 
 const Left = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage, last_stage } = useSelector(state => state);
+    const { sub_stage, last_stage, phase } = useSelector(state => state);
 
     // Screen 1
     const [capacity, setCapacity] = React.useState(300);
@@ -27,7 +27,6 @@ const Left = () => {
     const [recommendedPriceOptions] = React.useState([2, 6, 10, 12, 15, 20, 30]);
 
     // Screen 3
-    const [phase, setPhase] = React.useState(1);
 
     const handleIncrement = (name) => {
         switch(name) {
@@ -264,10 +263,10 @@ const Left = () => {
 
             {/* Screen 3 */}
             <div className="sub-stage" hidden={ sub_stage !== last_stage }>
-                <div className="row">
+                <div className="row mt-2">
                     <h1>Target: </h1>
                 </div>
-                <div className="row mb-2">
+                <div className="row mt-2">
                     <div className="stat">
                         <div className="title">
                             Number of mealkits to do
@@ -328,7 +327,7 @@ const Left = () => {
                     <div className="title">
                         We recommend a phase wise approach:
                     </div>
-                    <div className={ phase === 1 ? 'tile active' : 'tile' } onClick={ () => setPhase(1) }>
+                    <div className={ phase === 1 ? 'tile active' : 'tile' } onClick={ () => dispatch(changePhase({ phase : 1 })) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 1 </span>
                             <span className="tile-large"> Pilot </span>
@@ -338,9 +337,19 @@ const Left = () => {
                             <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
-                    <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => setPhase(2) }>
+                    <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => dispatch(changePhase({ phase : 2 })) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 2 </span>
+                            <span className="tile-large"> Pilot </span>
+                        </div>
+                        <div className="tile-right">
+                            <span className="tile-small"> target achieved: 10-15% </span>
+                            <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                        </div>
+                    </div>
+                    <div className={ phase === 3 ? 'tile active' : 'tile' } onClick={ () => dispatch(changePhase({ phase : 3 })) }>
+                        <div className="tile-left">
+                            <span className="tile-small"> Phase 3 </span>
                             <span className="tile-large"> Pilot </span>
                         </div>
                         <div className="tile-right">
@@ -586,10 +595,14 @@ const Style = styled.div`
                 background: #8ac03b;
             }
 
+            &:hover {
+                cursor: pointer;
+            }
+
         }
 
-        &.mb-2 {
-            margin-bottom: 20px!important;
+        &.mt-2 {
+            margin-top: 20px!important;
         }
     }
 `

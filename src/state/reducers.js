@@ -1,7 +1,8 @@
 const initialState = {
     stage : 0,
     sub_stage : 2,
-    last_stage: 2
+    last_stage: 2,
+    phase: 1
 }
 
 const reducer = (state = initialState, action) => {
@@ -12,6 +13,8 @@ const reducer = (state = initialState, action) => {
             return { ...state, sub_stage : state.sub_stage + 1 }
         case 'RESET':
             return { ...state, stage : 0, sub_stage : 0 };
+        case 'CHANGE_PHASE':
+            return { ...state, phase : action.payload.phase }
         default:
             return state;
     }
