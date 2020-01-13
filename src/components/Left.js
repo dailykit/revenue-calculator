@@ -7,7 +7,7 @@ import { reset } from '../state/actions';
 const Left = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage } = useSelector(state => state);
+    const { sub_stage, last_stage } = useSelector(state => state);
 
     // Screen 1
     const [capacity, setCapacity] = React.useState(300);
@@ -25,6 +25,9 @@ const Left = () => {
     const [mealKitsPerDayOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
     const [recommendedPrice, setRecommendedPrice] = React.useState(2);
     const [recommendedPriceOptions] = React.useState([2, 6, 10, 12, 15, 20, 30]);
+
+    // Screen 3
+    const [phase, setPhase] = React.useState(1);
 
     const handleIncrement = (name) => {
         switch(name) {
@@ -258,6 +261,95 @@ const Left = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Screen 3 */}
+            <div className="sub-stage" hidden={ sub_stage !== last_stage }>
+                <div className="row">
+                    <h1>Target: </h1>
+                </div>
+                <div className="row mb-2">
+                    <div className="stat">
+                        <div className="title">
+                            Number of mealkits to do
+                        </div>
+                        <div className="line">
+                            ---------------------------------
+                        </div>
+                        <div className="value">
+                            200/day
+                        </div>
+                    </div>
+                    <div className="stat">
+                        <div className="title">
+                            Revenue
+                        </div>
+                        <div className="line">
+                            ---------------------------------
+                        </div>
+                        <div className="value">
+                            $450k
+                        </div>
+                    </div>
+                    <div className="stat">
+                        <div className="title">
+                            Net Profit
+                        </div>
+                        <div className="line">
+                            ---------------------------------
+                        </div>
+                        <div className="value">
+                            10%
+                        </div>
+                    </div>
+                    <div className="stat">
+                        <div className="title">
+                            Capacity Utilization
+                        </div>
+                        <div className="line">
+                            ---------------------------------
+                        </div>
+                        <div className="value">
+                            80%
+                        </div>
+                    </div>
+                    <div className="stat">
+                        <div className="title">
+                            Average Price/serving
+                        </div>
+                        <div className="line">
+                            ---------------------------------
+                        </div>
+                        <div className="value">
+                            $7
+                        </div>
+                    </div>
+                </div>
+                <div className="row">
+                    <div className="title">
+                        We recommend a phase wise approach:
+                    </div>
+                    <div className={ phase === 1 ? 'tile active' : 'tile' } onClick={ () => setPhase(1) }>
+                        <div className="tile-left">
+                            <span className="tile-small"> Phase 1 </span>
+                            <span className="tile-large"> Pilot </span>
+                        </div>
+                        <div className="tile-right">
+                            <span className="tile-small"> target achieved: 10-15% </span>
+                            <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                        </div>
+                    </div>
+                    <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => setPhase(2) }>
+                        <div className="tile-left">
+                            <span className="tile-small"> Phase 2 </span>
+                            <span className="tile-large"> Pilot </span>
+                        </div>
+                        <div className="tile-right">
+                            <span className="tile-small"> target achieved: 10-15% </span>
+                            <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </Style>
     );
 }
@@ -446,6 +538,58 @@ const Style = styled.div`
                     }
                 }
             }
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            font-weight: 500;
+
+            .title {
+                flex: 1;
+            }
+
+            .line {
+                flex: 1;
+                font-weight: light;
+                color: #44496b;
+                text-align: center;
+            }
+
+            .value {
+                min-width: 100px;
+            }
+        }
+
+        .tile {
+            background: #1d2b44;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+
+            .tile-left, .tile-right {
+                display: flex;
+                flex-direction: column;
+
+                .tile-small {
+                    font-size: 14px;
+                }
+
+                .tile-large {
+                    font-size: 28px;
+                }
+            }
+
+            &.active {
+                background: #8ac03b;
+            }
+
+        }
+
+        &.mb-2 {
+            margin-bottom: 20px!important;
         }
     }
 `

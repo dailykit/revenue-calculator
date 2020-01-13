@@ -1,6 +1,6 @@
 const initialState = {
     stage : 0,
-    sub_stage : 1,
+    sub_stage : 2,
     last_stage: 2
 }
 
