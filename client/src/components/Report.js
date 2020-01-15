@@ -7,12 +7,30 @@ const Report = () => {
 
     const dispatch = useDispatch();
 
+    const [sending, setSending] = React.useState(false);
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
 
-    const submit = () => {
-        console.log(name, email);
-        dispatch(nextStage());
+    const submit = async () => {
+        try {
+            setSending(true);
+            const response = await fetch('/mail', {
+                method : 'POST',
+                headers : {
+                    'Content-Type': 'application/json'
+                },
+                body : JSON.stringify({ name, email })
+            });
+            const res = await response.json();
+            setSending(false);
+            if (res.success) {
+                dispatch(nextStage());
+            } else {
+                throw Error(res.message);
+            }
+        } catch(e) {
+            console.log(e);
+        }
     }
 
     return (
@@ -28,8 +46,8 @@ const Report = () => {
                     <label> Enter your email address </label>
                     <input placeholder="enter" value={ email } onChange={ (e) => setEmail(e.target.value) }/>
                 </div>
-                <button onClick={ submit }>
-                    Email me report
+                <button onClick={ submit } disabled={ sending }>
+                    { sending ? 'Sending...' : 'Email me report' }
                 </button>
             </div>
         </Style>
