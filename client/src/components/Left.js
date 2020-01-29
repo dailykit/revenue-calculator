@@ -9,10 +9,30 @@ const Left = () => {
     const dispatch = useDispatch();
     const { sub_stage, last_stage, phase, capacity, utilization, revenue, profit, price, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
 
+    const [new_revenue, set_new_revenue] = React.useState(0);
+    const [new_profit, set_new_profit] = React.useState(0);
+
+    React.useEffect(() => {
+        set_new_revenue(Math.floor((revenue * 1000 + ( 365 * mealKitsPerDay * recommendedPrice )) / 1000));
+    }, [revenue, mealKitsPerDay, recommendedPrice])
+
+    React.useEffect(() => {
+        let temp;
+        if (profit < 0) temp = 10;
+        else if (profit >= 0 && profit < 10) temp = profit + 15;
+        else if (profit >= 10 && profit < 20) temp = profit + 10;
+        else temp = profit + 5;
+        set_new_profit(temp);
+    }, [profit]);
+
     const changeValueHandler = (name, value) => {
         switch(name) {
             case 'capacity': {
-                dispatch(changeValue({ [name] : value, mealKitsPerDay : Math.floor(value/2) }));
+                dispatch(changeValue({ [name] : value, mealKitsPerDay : value - utilization }));
+                break;
+            }
+            case 'utilization': {
+                dispatch(changeValue({ [name] : value, mealKitsPerDay : capacity - value }));
                 break;
             }
             case 'revenue': {
@@ -128,7 +148,7 @@ const Left = () => {
     return (
         <Style>
             <header>
-                <button onClick={ () => dispatch(reset()) }> <i class="fas fa-circle-notch"></i> Start again </button>
+                <button onClick={ () => dispatch(reset()) }> <i className="fas fa-circle-notch"></i> Start again </button>
             </header>
 
             {/* Screen 1 */}
@@ -137,30 +157,30 @@ const Left = () => {
                     <div className="upper"> 
                         <div className="question">How many customers can you serve per day?</div>
                         <div className="selector">
-                            <i class="fas fa-minus" onClick={ () => { capacity < 50 ? changeValueHandler('capacity', 0) : changeValueHandler('capacity', capacity - 50) } } />
+                            <i className="fas fa-minus" onClick={ () => { capacity < 50 ? changeValueHandler('capacity', 0) : changeValueHandler('capacity', capacity - 50) } } />
                             <span >
                                 { capacity } servings
                             </span> 
-                            <i class="fas fa-plus" onClick={ () => { capacity > 450 ? changeValueHandler('capacity', 500) : changeValueHandler('capacity', capacity + 50) } } />
+                            <i className="fas fa-plus" onClick={ () => { capacity > 450 ? changeValueHandler('capacity', 500) : changeValueHandler('capacity', capacity + 50) } } />
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="500" value="300" class="slider" value={ capacity } onChange={ e => changeValueHandler( 'capacity', parseInt(e.target.value))}/>
+                        <input type="range" min="0" step="10" max="500" value="300" className="slider" value={ capacity } onChange={ e => changeValueHandler( 'capacity', parseInt(e.target.value))}/>
                     </div>
                 </div>
                 <div className="row">
                     <div className="upper"> 
                         <div className="question">How many customers are you serving today?</div>
                         <div className="selector">
-                            <i class="fas fa-minus" onClick={ () => { utilization < 50 ? changeValueHandler( 'utilization', 0) : changeValueHandler( 'utilization', utilization - 50) } } />
+                            <i className="fas fa-minus" onClick={ () => { utilization < 50 ? changeValueHandler( 'utilization', 0) : changeValueHandler( 'utilization', utilization - 50) } } />
                             <span >
                                 { utilization } servings
                             </span> 
-                            <i class="fas fa-plus" onClick={ () => { utilization > 450 ? changeValueHandler( 'utilization', 500) : changeValueHandler( 'utilization', utilization + 50) } } />
+                            <i className="fas fa-plus" onClick={ () => { utilization > 450 ? changeValueHandler( 'utilization', 500) : changeValueHandler( 'utilization', utilization + 50) } } />
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="500" value="300" class="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
+                        <input type="range" min="0" step="10" max="500" value="300" className="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
                         <span className="utilization"> { Math.floor((utilization / capacity) * 100) }% utilization </span>
                     </div>
                 </div>
@@ -168,17 +188,17 @@ const Left = () => {
                     <div className="upper"> 
                         <div className="question">Revenue:</div>
                         <div className="selector">
-                            <i class="fas fa-minus" onClick={ () => handleDecrement('revenue') } />
+                            <i className="fas fa-minus" onClick={ () => handleDecrement('revenue') } />
                             <span >
                                 ${ revenue === 1000? '1 M' : revenue + 'k' } 
                             </span> 
-                            <i class="fas fa-plus" onClick={ () => handleIncrement('revenue') } />
+                            <i className="fas fa-plus" onClick={ () => handleIncrement('revenue') } />
                         </div>
                     </div>
                     <div className="lower">
                         <div className="radio-group">
                             {
-                                revenueOptions.map(op => <span className={ op == revenue ? 'active' : '' } onClick={ () => changeValueHandler( 'revenue', op) }>{ op === 1000 ? '1 M' : op }</span>)
+                                revenueOptions.map((op, i) => <span key={ i } className={ op == revenue ? 'active' : '' } onClick={ () => changeValueHandler( 'revenue', op) }>{ op === 1000 ? '1 M' : op }</span>)
                             }
                         </div>
                     </div>
@@ -187,17 +207,17 @@ const Left = () => {
                     <div className="upper"> 
                         <div className="question">Net Profit:</div>
                         <div className="selector">
-                            <i class="fas fa-minus" onClick={ () => handleDecrement('profit') } />
+                            <i className="fas fa-minus" onClick={ () => handleDecrement('profit') } />
                             <span >
                                 { profit }%
                             </span> 
-                            <i class="fas fa-plus" onClick={ () => handleIncrement('profit') } />
+                            <i className="fas fa-plus" onClick={ () => handleIncrement('profit') } />
                         </div>
                     </div>
                     <div className="lower">
                         <div className="radio-group red-green">
                             {
-                                profitOptions.map(op => <span className={ op == profit ? 'active' : '' } onClick={ () => changeValueHandler( 'profit', op) }>{ op }</span>)
+                                profitOptions.map((op ,i) => <span key={ i } className={ op == profit ? 'active' : '' } onClick={ () => changeValueHandler( 'profit', op) }>{ op }</span>)
                             }
                         </div>
                     </div>
@@ -220,7 +240,7 @@ const Left = () => {
                     <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
                         <div className="radio-group">
                             {
-                                priceOptions.map(op => <span className={ op == price ? 'active' : '' } onClick={ () => changeValueHandler( 'price', op) }>{ op }</span>)
+                                priceOptions.map((op, i) => <span key={ i } className={ op == price ? 'active' : '' } onClick={ () => changeValueHandler( 'price', op) }>{ op }</span>)
                             }
                         </div>
                     </div>
@@ -239,7 +259,7 @@ const Left = () => {
                     <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
                         <div className="radio-group">
                             {
-                                mealKitsPerDayOptions.map(op => <span className={ op == mealKitsPerDay ? 'active' : '' } onClick={ () => changeValueHandler( 'mealKitsPerDay', op) }>{ op }</span>)
+                                mealKitsPerDayOptions.map((op, i) => <span key={ i } className={ op == mealKitsPerDay ? 'active' : '' } onClick={ () => changeValueHandler( 'mealKitsPerDay', op) }>{ op }</span>)
                             }
                         </div>
                     </div>
@@ -258,7 +278,7 @@ const Left = () => {
                     <div className={ sub_stage === 1 && !decide ? 'lower disabled' : 'lower' }>
                         <div className="radio-group">
                             {
-                                recommendedPriceOptions.map(op => <span className={ op == recommendedPrice ? 'active' : '' } onClick={ () => changeValueHandler( 'recommendedPrice', op) }>{ op }</span>)
+                                recommendedPriceOptions.map((op, i) => <span key={ i } className={ op == recommendedPrice ? 'active' : '' } onClick={ () => changeValueHandler( 'recommendedPrice', op) }>{ op }</span>)
                             }
                         </div>
                         <div className="help-text">
@@ -290,7 +310,7 @@ const Left = () => {
                             ---------------------------------
                         </div>
                         <div className="value">
-                            200/day
+                            { mealKitsPerDay }/day
                         </div>
                     </div>
                     <div className="stat">
@@ -301,7 +321,7 @@ const Left = () => {
                             ---------------------------------
                         </div>
                         <div className="value">
-                            $450k
+                            ${ new_revenue >= 1000 ? (new_revenue / 1000).toFixed(1) + 'M' : new_revenue + 'k' }
                         </div>
                     </div>
                     <div className="stat">
@@ -312,7 +332,7 @@ const Left = () => {
                             ---------------------------------
                         </div>
                         <div className="value">
-                            10%
+                            { new_profit }%
                         </div>
                     </div>
                     <div className="stat">
@@ -323,7 +343,7 @@ const Left = () => {
                             ---------------------------------
                         </div>
                         <div className="value">
-                            80%
+                            100%
                         </div>
                     </div>
                     <div className="stat">
@@ -334,7 +354,7 @@ const Left = () => {
                             ---------------------------------
                         </div>
                         <div className="value">
-                            $7
+                            ${ recommendedPrice }
                         </div>
                     </div>
                 </div>

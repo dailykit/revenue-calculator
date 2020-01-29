@@ -7,9 +7,9 @@ const initialState = {
     utilization : 200,
     revenue : 150,
     profit : -10,
-    price : 0,
-    mealKitsPerDay : 0,
-    recommendedPrice : 0
+    price : 0.41,
+    mealKitsPerDay : 100,
+    recommendedPrice : 0.30
 }
 
 const reducer = (state = initialState, action) => {

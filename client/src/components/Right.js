@@ -7,7 +7,23 @@ import { nextSubStage, nextStage, prevSubStage } from '../state/actions';
 const Right = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage, last_stage, phase } = useSelector(state => state);
+    const { sub_stage, last_stage, phase, revenue, profit, utilization, capacity, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
+
+    const [new_revenue, set_new_revenue] = React.useState(0);
+    const [new_profit, set_new_profit] = React.useState(0);
+
+    React.useEffect(() => {
+        set_new_revenue(Math.floor((revenue * 1000 + ( 365 * mealKitsPerDay * recommendedPrice )) / 1000));
+    }, [revenue, mealKitsPerDay, recommendedPrice])
+
+    React.useEffect(() => {
+        let temp;
+        if (profit < 0) temp = 10;
+        else if (profit >= 0 && profit < 10) temp = profit + 15;
+        else if (profit >= 10 && profit < 20) temp = profit + 10;
+        else temp = profit + 5;
+        set_new_profit(temp);
+    }, [profit]);
 
     return (
         <Style sub_stage={ sub_stage + 1 }>
@@ -22,25 +38,25 @@ const Right = () => {
             </main>
             <main hidden={ sub_stage !== 1 }>
                 <h2> Your earnings: </h2>
-                <table cellspacing="0" cellpadding="0">
+                <table cellSpacing="0" cellPadding="0">
                     <tbody>
                         <tr>
                             <td>Revenue</td>
-                            <td>$150k <i className="fas fa-times-circle" /></td>
-                            <td>$450k</td>
-                            <td><i className="fas fa-arrow-up" />20%</td>
+                            <td>${ revenue >= 1000 ? (revenue / 1000).toFixed(1) + 'M' : revenue + 'k' } <i className="fas fa-times-circle" /></td>
+                            <td>${ new_revenue >= 1000 ? (new_revenue / 1000).toFixed(1) + 'M' : new_revenue + 'k' }</td>
+                            <td><i className="fas fa-arrow-up" />{ (((new_revenue - revenue) / revenue) * 100).toFixed(2) }%</td>
                         </tr>
                         <tr>
                             <td>Net profit</td>
-                            <td>-20% <i className="fas fa-times-circle" /></td>
-                            <td>10%</td>
-                            <td><i className="fas fa-arrow-up" /> 30%</td>
+                            <td>{ profit }% <i className="fas fa-times-circle" /></td>
+                            <td>{ new_profit }% </td>
+                            <td><i className="fas fa-arrow-up" /> { new_profit - profit } %</td>
                         </tr>
                         <tr>
                             <td>Capacity utilization</td>
-                            <td>70% <i className="fas fa-times-circle" /></td>
-                            <td>80%</td>
-                            <td> <i className="fas fa-arrow-up" />10%</td>
+                            <td>{ Math.floor((utilization / capacity) * 100) }% <i className="fas fa-times-circle" /></td>
+                            <td>{ Math.floor(((utilization + mealKitsPerDay) / capacity) * 100) }%</td>
+                            <td> <i className="fas fa-arrow-up" /> { Math.floor(((utilization + mealKitsPerDay) / capacity) * 100) - Math.floor((utilization / capacity) * 100) } %</td>
                         </tr>
                     </tbody>
                 </table>
@@ -165,7 +181,7 @@ const Style = styled.div(
 
     main {
         color: #1d2b44;
-        flex: 1;
+        flex: ${ sub_stage === 3 ? '1' : 'none' };
 
         h1 {
             font-size: 48px;
@@ -279,9 +295,9 @@ const Style = styled.div(
     }
 
     footer {
-        align-self: flex-end;
+        width: -webkit-fill-available;
         display: flex;
-        justify-content: space-between;
+        justify-content: ${ sub_stage === 1 ? 'flex-end' : 'space-between' };
 
         button {
             padding: 13px 50px;
@@ -295,7 +311,5 @@ const Style = styled.div(
             }
         }
     }
-
-
     `
 )
