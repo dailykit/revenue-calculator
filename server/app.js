@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
 const nodemailer = require('nodemailer');
@@ -7,6 +8,7 @@ app.use(logger('dev'));
 app.use(express.json());
 
 app.use('/mail', async (req, res) => {
+    console.log(process.env.GAMIL_ID);
     try {
         let transporter = nodemailer.createTransport({
             host: 'smtp.gmail.com',
@@ -15,10 +17,10 @@ app.use('/mail', async (req, res) => {
             auth: {
                 type : 'Oauth2',
                 user: process.env.GAMIL_ID,
-                clientId : '1029762689434-sjbq1hi9nbk5960q488fif8310l4hfrs.apps.googleusercontent.com',
+                clientId : '1029762689434-9q4p6r5ihkuol1svg1s9tbpojj61dej3.apps.googleusercontent.com',
                 clientSecret : process.env.CLIENT_SECRET,
-                refreshToken : '1//04WDHT8C82soNCgYIARAAGAQSNwF-L9IriQ2Ag2fTngrHcZLUstlAcoj0dYyMFMpWXs29NRX-lzFd9yEoIa8Lt-JZdiUk9uwmfB4',
-                accessToken : 'ya29.Il-5BzEvvba0e6A_H-h3AEtbpnvtjmoZ1Z4f0MOTeeLrz7nUmf40dYPGrzdVVTtP0bzGjXmhb6FOpQH-t42rPPRGkZLYsNVawJ4UzaQaY9hLGWXo0CxtiuRVu_EwNcAkTw'
+                refreshToken : '1//046pgAMfjnMuvCgYIARAAGAQSNwF-L9IrOsnC1jUSheTvq_ILgd7p28pn_C5oZveCTfeEUnHuAruQSMDy4iD66iLVM1SQ_DwzAMg',
+                accessToken : 'ya29.Il-7B6mjevaPFcCt0bRaTYr8FxM2rgbhi96vs0ct02JBlogMwCWw8h3Oj_Bj-CrlIOvPJig4kNmU0ZFFPHGMZ-KLuRdxTi6jy0jg4t0OsM4u9XujoyaMErw5UxboiNKGcA'
             }
         });
 
