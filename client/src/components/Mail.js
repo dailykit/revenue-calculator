@@ -8,9 +8,9 @@ const Mail = () => {
             <h2>Mail Sent!</h2>
             <p className="help-text">Please check your spam incase you don't find it.</p>
             <p>Thank you for your time! <br /> We look forward to help you with your queries.</p>
-            <button>
+            <a href="https://www.dailykit.org/meetings/dailykit/15-minute-introduction-call">
                 Schedule a call
-            </button>
+            </a>
         </Style>
     );
 }
@@ -45,7 +45,7 @@ const Style = styled.div`
         margin-bottom: 128px;
     }
 
-    button {
+    a {
         padding: 15px 40px;
         text-transform: uppercase;
         background: none;

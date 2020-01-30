@@ -1,32 +1,40 @@
 import React from 'react';
 import styled from 'styled-components';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { nextStage } from '../state/actions';
 
 const Report = () => {
 
     const dispatch = useDispatch();
-
+    const { phase, capacity, utilization, revenue, profit, price, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
+    const emailPattern = new RegExp(/^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/);
     const [sending, setSending] = React.useState(false);
+    const [error, setError] = React.useState(undefined);
     const [name, setName] = React.useState('');
     const [email, setEmail] = React.useState('');
 
     const submit = async () => {
         try {
-            setSending(true);
-            const response = await fetch('/mail', {
-                method : 'POST',
-                headers : {
-                    'Content-Type': 'application/json'
-                },
-                body : JSON.stringify({ name, email })
-            });
-            const res = await response.json();
-            setSending(false);
-            if (res.success) {
-                dispatch(nextStage());
+            if (name.length && emailPattern.test(email)) {
+                setError(undefined);
+                setSending(true);
+                const response = await fetch('/mail', {
+                    method : 'POST',
+                    headers : {
+                        'Content-Type': 'application/json'
+                    },
+                    body : JSON.stringify({ name, email, phase, capacity, utilization, revenue, profit, price, mealKitsPerDay, recommendedPrice })
+                });
+                const res = await response.json();
+                setSending(false);
+                if (res.success) {
+                    dispatch(nextStage());
+                } else {
+                    setError('Looks like a problem on our end! Please try again later.');
+                    throw Error(res.message);
+                }
             } else {
-                throw Error(res.message);
+                setError('Ugh! Are you high on Pizza? Check your inputs.');
             }
         } catch(e) {
             console.log(e);
@@ -50,6 +58,12 @@ const Report = () => {
                     { sending ? 'Sending...' : 'Email me report' }
                 </button>
             </div>
+            {
+                error && 
+                <div className="error">
+                   { error }
+                </div>
+            }
         </Style>
     );
 }
@@ -79,6 +93,7 @@ const Style = styled.div`
     .form {
         max-width: 300px;
         text-align: left;
+        margin-bottom: 10px;
 
         .field {
             margin-bottom: 25px;
@@ -108,5 +123,9 @@ const Style = styled.div`
                 cursor: pointer;
             }
         }
+    }
+
+    .error {
+        color: #C04169;
     }
 `
