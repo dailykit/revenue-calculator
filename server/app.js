@@ -1,12 +1,15 @@
 require('dotenv').config();
 const express = require('express');
 const logger = require('morgan');
+const path = require('path');
 const app = express();
 
 const utils = require('./utils');
 
 app.use(logger('dev'));
 app.use(express.json());
+
+app.use(express.static(path.join(__dirname, '..', '/client/build')))
 
 app.use('/mail', async (req, res) => {
     try {
@@ -24,6 +27,10 @@ app.use('/mail', async (req, res) => {
         console.log(e);
         res.json({ success : false, message : e.message, data : null });
     }
+})
+
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, '..', '/client/build/index.html'))
 })
 
 app.listen(5000, () => {
