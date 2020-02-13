@@ -58,46 +58,31 @@ const Left = () => {
 
     // Screen 2
     const [decide, setDecide] = React.useState(false);
-    const [priceOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);
-    const [mealKitsPerDayOptions] = React.useState([20, 50, 70, 90, 74, 78, 200]);    
+    const [priceOptions] = React.useState([2, 6, 10, 12, 15, 20, 30]);
+    const [mealKitsPerDayOptions] = React.useState([20, 50, 70, 85, 100, 150, 200]);    
     const [recommendedPriceOptions] = React.useState([2, 6, 10, 12, 15, 20, 30]);
     
     // Screen 3
     const handleIncrement = (name) => {
         switch(name) {
             case 'revenue': {
-                const index = revenueOptions.indexOf(revenue);
-                if (index != revenueOptions.length - 1) {
-                    changeValueHandler('revenue', revenueOptions[index + 1]);
-                }
+                changeValueHandler('revenue', revenue + 10);
                 break;
             }
             case 'profit': {
-                const index = profitOptions.indexOf(profit);
-                if (index != profitOptions.length - 1) {
-                    changeValueHandler('profit', profitOptions[index + 1]);
-                }
+                changeValueHandler('profit', profit + 1);
                 break;
             }
             case 'price': {
-                const index = priceOptions.indexOf(price);
-                if (index != priceOptions.length - 1 && decide) {
-                    changeValueHandler('price' , priceOptions[index + 1]);
-                }
+                if (decide) changeValueHandler('price' , Math.floor(price + 1));
                 break;
             }
             case 'meal_kits_per_day': {
-                const index = mealKitsPerDayOptions.indexOf(mealKitsPerDay);
-                if (index != mealKitsPerDayOptions.length - 1 && decide) {
-                    changeValueHandler('mealKitsPerDay', mealKitsPerDayOptions[index + 1]);
-                }
+                if (decide) changeValueHandler('mealKitsPerDay', mealKitsPerDay + 10);
                 break;
             }
             case 'recommended_price': {
-                const index = recommendedPriceOptions.indexOf(recommendedPrice);
-                if (index != recommendedPriceOptions.length - 1 && decide) {
-                    changeValueHandler('recommendedPrice' , recommendedPriceOptions[index + 1]);
-                }
+                if (decide) changeValueHandler('recommendedPrice' , Math.floor(recommendedPrice + 1));
                 break;
             }
             default: return;
@@ -107,38 +92,23 @@ const Left = () => {
     const handleDecrement = (name) => {
         switch(name) {
             case 'revenue': {
-                const index = revenueOptions.indexOf(revenue);
-                if (index != 0) {
-                    changeValueHandler('revenue', revenueOptions[index - 1]);
-                }
+                changeValueHandler('revenue', revenue - 10 < 0 ? revenue : revenue - 10);
                 break;
             }
             case 'profit': {
-                const index = profitOptions.indexOf(profit);
-                if (index != 0) {
-                    changeValueHandler('profit', profitOptions[index - 1]);
-                }
+                changeValueHandler('profit', profit - 1);
                 break;
             }
             case 'price': {
-                const index = priceOptions.indexOf(price);
-                if (index != 0 && decide) {
-                    changeValueHandler('price' , priceOptions[index - 1]);
-                }
+                if (decide) changeValueHandler('price' , Math.floor(price - 1) < 0 ? price : Math.floor(price - 1));
                 break;
             }
             case 'meal_kits_per_day': {
-                const index = mealKitsPerDayOptions.indexOf(mealKitsPerDay);
-                if (index != 0 && decide) {
-                    changeValueHandler('mealKitsPerDay', mealKitsPerDayOptions[index - 1]);
-                }
+                if (decide) changeValueHandler('mealKitsPerDay', mealKitsPerDay - 10 < 0 ? mealKitsPerDay : mealKitsPerDay - 10);
                 break;
             }
             case 'recommended_price': {
-                const index = recommendedPriceOptions.indexOf(recommendedPrice);
-                if (index != 0 && decide) {
-                    changeValueHandler('recommendedPrice' , recommendedPriceOptions[index - 1]);
-                }
+                if (decide) changeValueHandler('recommendedPrice' , Math.floor(recommendedPrice - 1) < 0 ? recommendedPrice : Math.floor(recommendedPrice - 1));
                 break;
             }
             default: return;
@@ -165,7 +135,7 @@ const Left = () => {
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="500" value="300" className="slider" value={ capacity } onChange={ e => changeValueHandler( 'capacity', parseInt(e.target.value))}/>
+                        <input type="range" min="0" step="10" max="1000" value="300" className="slider" value={ capacity } onChange={ e => changeValueHandler( 'capacity', parseInt(e.target.value))}/>
                     </div>
                 </div>
                 <div className="row">
@@ -180,8 +150,11 @@ const Left = () => {
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="500" value="300" className="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
-                        <span className="utilization"> { Math.floor((utilization / capacity) * 100) }% utilization </span>
+                        <input type="range" min="0" step="10" max="1000" value="300" className="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
+                        {
+                            Math.floor((utilization / capacity) * 100) != NaN && 
+                            <span className="utilization"> { Math.floor((utilization / capacity) * 100) }% utilization </span>
+                        }
                     </div>
                 </div>
                 <div className="row">
@@ -190,7 +163,7 @@ const Left = () => {
                         <div className="selector">
                             <i className="fas fa-minus" onClick={ () => handleDecrement('revenue') } />
                             <span >
-                                ${ revenue === 1000? '1 M' : revenue + 'k' } 
+                                ${ revenue >= 1000?  (revenue/1000).toFixed(2) + 'M' : revenue + 'k' } 
                             </span> 
                             <i className="fas fa-plus" onClick={ () => handleIncrement('revenue') } />
                         </div>
@@ -287,10 +260,10 @@ const Left = () => {
                     </div>
                 </div>
                 <div className="row">
-                    <div className="toggle">
+                    <div className="toggle" onClick={ () => setDecide(!decide) }>
                             <span> Decide Yourself </span>
-                            <span className="toggle-bg">
-                                <span className={ decide ? 'toggle-btn active' : 'toggle-btn' } onClick={ () => setDecide(!decide) }></span>
+                            <span className={ decide ? 'toggle-bg active' : 'toggle-bg' }>
+                                <span className={ decide ? 'toggle-btn active' : 'toggle-btn' }></span>
                             </span>
                     </div>
                 </div>
@@ -365,31 +338,31 @@ const Left = () => {
                     <div className={ phase === 1 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 1 ) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 1 </span>
-                            <span className="tile-large"> Pilot </span>
+                            <span className="tile-large"> Walk </span>
                         </div>
                         <div className="tile-right">
                             <span className="tile-small"> target achieved: 10-15% </span>
-                            <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                            <span className="tile-large"> 10/20 <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
                     <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 2 ) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 2 </span>
-                            <span className="tile-large"> Pilot </span>
+                            <span className="tile-large"> Run </span>
                         </div>
                         <div className="tile-right">
-                            <span className="tile-small"> target achieved: 10-15% </span>
-                            <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                            <span className="tile-small"> target achieved: 15-50% </span>
+                            <span className="tile-large"> 20/50 <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
                     <div className={ phase === 3 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 3 ) }>
                         <div className="tile-left">
                             <span className="tile-small"> Phase 3 </span>
-                            <span className="tile-large"> Pilot </span>
+                            <span className="tile-large"> Sprint </span>
                         </div>
                         <div className="tile-right">
-                            <span className="tile-small"> target achieved: 10-15% </span>
-                            <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                            <span className="tile-small"> target achieved: 50-80% </span>
+                            <span className="tile-large"> 50/100 <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
                 </div>
@@ -553,12 +526,13 @@ const Style = styled.div`
             color: #8ac03b;
             text-transform: uppercase;
             text-align: center;
+            cursor: pointer;
 
             .toggle-bg {
                 position: absolute;
                 height: 3px;
                 width: 30px;
-                background: #8ac03b;
+                background: #c3c3c3;
                 top: 50%;
                 transform: translateY(-50%);
                 margin-left: 20px;
@@ -579,7 +553,12 @@ const Style = styled.div`
 
                     &.active {
                         left: 60%;
+                        background: #8ac03b;
                     }
+                }
+
+                &.active {
+                    background: #8ac03b;
                 }
             }
         }

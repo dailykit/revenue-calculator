@@ -82,31 +82,31 @@ const Right = () => {
                 <div className={ phase === 1 ? 'tile active' : 'tile' }>
                     <div className="tile-left">
                         <span className="tile-small"> Start with </span>
-                        <span className="tile-large"> Pilot </span>
+                        <span className="tile-large"> Walk </span>
                     </div>
                     <div className="tile-right">
                         <span className="tile-small"> target achieved: 10-15% </span>
-                        <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                        <span className="tile-large"> 10/20 <span className="tile-small">meal kits</span> </span>
                     </div>
                 </div>
                 <div className={ phase === 2 ? 'tile active' : 'tile' }>
                     <div className="tile-left">
                         <span className="tile-small"> Start with </span>
-                        <span className="tile-large"> Pilot </span>
+                        <span className="tile-large"> Run </span>
                     </div>
                     <div className="tile-right">
-                        <span className="tile-small"> target achieved: 10-15% </span>
-                        <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                        <span className="tile-small"> target achieved: 15-50% </span>
+                        <span className="tile-large"> 20/50 <span className="tile-small">meal kits</span> </span>
                     </div>
                 </div>
                 <div className={ phase === 3 ? 'tile active' : 'tile' }>
                     <div className="tile-left">
                         <span className="tile-small"> Start with </span>
-                        <span className="tile-large"> Pilot </span>
+                        <span className="tile-large"> Sprint </span>
                     </div>
                     <div className="tile-right">
-                        <span className="tile-small"> target achieved: 10-15% </span>
-                        <span className="tile-large"> 100/200 <span className="tile-small">meal kits</span> </span>
+                        <span className="tile-small"> target achieved: 50-80% </span>
+                        <span className="tile-large"> 50/100 <span className="tile-small">meal kits</span> </span>
                     </div>
                 </div>
                 <div className={ phase === 1 ? 'content active' : 'content' }>
