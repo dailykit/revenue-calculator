@@ -155,7 +155,7 @@ const Left = () => {
             <div className="sub-stage" hidden={ sub_stage !== 0 }>
                 <div className="row">
                     <div className="upper"> 
-                        <div className="question">How many customers can you serve per day?</div>
+                        <div className="question">How many servings can you do per day?</div>
                         <div className="selector">
                             <i className="fas fa-minus" onClick={ () => { capacity < 50 ? changeValueHandler('capacity', 0) : changeValueHandler('capacity', capacity - 50) } } />
                             <span >
@@ -170,7 +170,7 @@ const Left = () => {
                 </div>
                 <div className="row">
                     <div className="upper"> 
-                        <div className="question">How many customers are you serving today?</div>
+                        <div className="question">How many servings are you doing as of today?</div>
                         <div className="selector">
                             <i className="fas fa-minus" onClick={ () => { utilization < 50 ? changeValueHandler( 'utilization', 0) : changeValueHandler( 'utilization', utilization - 50) } } />
                             <span >

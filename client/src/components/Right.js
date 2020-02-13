@@ -133,14 +133,21 @@ const Right = () => {
                     <div className="required">
                         <h5>Required: </h5>
                         <ol>
+                            <li>Small Capital Needed</li>
+                            <li>Need 2 Weighing Scales</li>
                             <li>DailyKit Software</li>
                         </ol>
                     </div>
                     <div className="outcome">
                         <h5>At the end of Phase 2, you would have: </h5>
                         <ol>
-                            <li>Introduced your Meal Kit services to your customers</li>
-                            <li>Traffic to your website</li>
+                            <li>Increased your Meal Kit Production</li>
+                            <li>Achieved constant Social Media buzz</li>
+                            <li>Get a firm hold on your operations</li>
+                            <li>Achieved Word of Mouth Marketing</li>
+                            <li>Sold higher number of Meal Kits</li>
+                            <li>Noticed a constant demand for Meal Kits which makes it easier for you to forecast demand</li>
+                            <li>Consistent Traffic to your website</li>
                         </ol>
                     </div>
                 </div>
@@ -148,14 +155,21 @@ const Right = () => {
                     <div className="required">
                         <h5>Required: </h5>
                         <ol>
-                            <li>Zero Capital</li>
+                            <li>Capital Needed</li>
+                            <li>Need 2-4 Weighing Scales</li>
                             <li>DailyKit Software</li>
+                            <li>Dedicated Labor needed to pack Meal Kits</li>
                         </ol>
                     </div>
                     <div className="outcome">
                         <h5>At the end of Phase 3, you would have: </h5>
                         <ol>
-                            <li>Introduced your Meal Kit services to your customers</li>
+                            <li>High Meal Kit Production</li>
+                            <li>Achieved constant Social Media buzz and reviews of your Meal Kits</li>
+                            <li>Expanding Operational Plans</li>
+                            <li>Can plan to add customisation of Meal Kits</li>
+                            <li>Increase the Recipes of your Meal Kits in your Menu</li>
+                            <li>Consistent and dependable revenue from Meal Kits</li>
                         </ol>
                     </div>
                 </div>
@@ -331,8 +345,8 @@ const Style = styled.div(
             color: 1d2b44;
 
             h5 {
-                font-size: 20px;
-                font-weight: normal;
+                font-size: 16px;
+                font-weight: bold;
                 margin-bottom: 5px;
             }
 
@@ -342,6 +356,7 @@ const Style = styled.div(
 
                 li {
                     font-size: 18px;
+                    margin-top: 8px;
                 }
             }
 
