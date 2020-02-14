@@ -131,7 +131,7 @@ const Left = () => {
                             <span >
                                 { capacity } servings
                             </span> 
-                            <i className="fas fa-plus" onClick={ () => { capacity > 450 ? changeValueHandler('capacity', 500) : changeValueHandler('capacity', capacity + 50) } } />
+                            <i className="fas fa-plus" onClick={ () => { capacity > 950 ? changeValueHandler('capacity', 1000) : changeValueHandler('capacity', capacity + 50) } } />
                         </div>
                     </div>
                     <div className="lower">
@@ -146,7 +146,7 @@ const Left = () => {
                             <span >
                                 { utilization } servings
                             </span> 
-                            <i className="fas fa-plus" onClick={ () => { utilization > 450 ? changeValueHandler( 'utilization', 500) : changeValueHandler( 'utilization', utilization + 50) } } />
+                            <i className="fas fa-plus" onClick={ () => { utilization > 950 ? changeValueHandler( 'utilization', 1000) : changeValueHandler( 'utilization', utilization + 50) } } />
                         </div>
                     </div>
                     <div className="lower">
