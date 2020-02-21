@@ -4,7 +4,7 @@ import styled from 'styled-components';
 const Mail = () => {
     return (
         <Style>
-            <StyledLogo className="logo">
+            <StyledLogo className="logo" onClick={ () => window.open('https://dailykit.org', '_blank') }>
                 <img src={require("../assets/logo.png")} width="150"/>
             </StyledLogo>
             <i class="far fa-paper-plane"></i>
@@ -77,9 +77,14 @@ const Style = styled.div`
 
 const StyledLogo = styled.div`
     position: absolute;
-    top: 10px;
+    top: 30px;
     left: 10px;
     right: 10px;
     text-align: center;
     z-index: 1;
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+        top: 10px;
+    }
 `

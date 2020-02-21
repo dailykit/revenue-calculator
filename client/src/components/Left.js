@@ -113,7 +113,7 @@ const Left = () => {
 
     return (
         <>
-        <StyledLogo className="logo">
+        <StyledLogo className="logo" onClick={ () => window.open('https://dailykit.org', '_blank') }>
             <img src={require("../assets/logo.png")} width="150"/>
         </StyledLogo>
         <Style sub_stage={ sub_stage }>
@@ -678,7 +678,13 @@ const Style = styled.div`
 
 const StyledLogo = styled.div`
     position: absolute;
-    top: 10px;
-    left: 10px;
+    top: 20px;
+    left: 50px;
     z-index: 1;
+    cursor: pointer;
+
+    @media (max-width: 768px) {
+        top: 40px;
+        left: 10px;
+    }
 `
