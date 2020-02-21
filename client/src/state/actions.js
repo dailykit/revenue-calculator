@@ -22,6 +22,13 @@ export const reset = () => {
     }
 }
 
+export const customSubStage = (payload) => {
+    return {
+        type : 'CUSTOM_SUB_STAGE',
+        payload
+    }
+} 
+
 export const changeValue = (payload) => {
     return {
         type : 'CHANGE_VALUE',

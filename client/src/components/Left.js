@@ -1,17 +1,36 @@
 import React from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
-
+import { nextSubStage, nextStage, prevSubStage } from '../state/actions';
 import { reset, changeValue } from '../state/actions';
 
 const Left = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage, last_stage, phase, capacity, utilization, revenue, profit, price, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
+    const { sub_stage, last_stage, phase, capacity, utilization, utilization_percentage, revenue, profit, price, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
 
     const [new_revenue, set_new_revenue] = React.useState(0);
     const [new_profit, set_new_profit] = React.useState(0);
 
+    // Scroll to top
+    React.useEffect(() => {
+        window.scrollTo(0,0); 
+    }, [sub_stage]);
+
+    // Screen 1
+    React.useEffect(() => {
+        dispatch(changeValue({ price : (((revenue * 1000)/365)/utilization).toFixed(2) }));
+    }, [revenue, utilization]);
+
+    React.useEffect(() => {
+        dispatch(changeValue({ recommendedPrice : profit > 0 ? (utilization_percentage < 70 ? (price - (0.15 * price)).toFixed(2) : price) : (price - (0.15 * price)).toFixed(2) }));
+    }, [profit, utilization_percentage, price]);
+
+    React.useEffect(() => {
+        dispatch(changeValue({ mealKitsPerDay : utilization_percentage < 70 ? capacity - utilization : capacity + Math.floor(capacity * 0.2) - utilization, utilization_percentage : Math.floor((utilization / capacity) * 100) }))
+    }, [capacity, utilization_percentage, utilization]);
+
+    // Screen 2
     React.useEffect(() => {
         set_new_revenue(Math.floor((revenue * 1000 + ( 365 * mealKitsPerDay * recommendedPrice )) / 1000));
     }, [revenue, mealKitsPerDay, recommendedPrice])
@@ -26,30 +45,7 @@ const Left = () => {
     }, [profit]);
 
     const changeValueHandler = (name, value) => {
-        switch(name) {
-            case 'capacity': {
-                dispatch(changeValue({ [name] : value, mealKitsPerDay : value - utilization }));
-                break;
-            }
-            case 'utilization': {
-                dispatch(changeValue({ [name] : value, mealKitsPerDay : capacity - value }));
-                break;
-            }
-            case 'revenue': {
-                dispatch(changeValue({ [name] : value, price : (value/365).toFixed(2) }));
-                break;
-            }
-            case 'profit': {
-                dispatch(changeValue({ [name] : value, recommendedPrice : value > 0 ? price : (price - (0.15 * price)).toFixed(2) }));
-                break;
-            }
-            case 'price': {
-                dispatch(changeValue({ [name] : value, recommendedPrice : profit > 0 ? value : (value - (0.15 * value)).toFixed(2) }));
-                break;
-            }
-            default:
-                dispatch(changeValue({ [name] : value }));
-        }
+        dispatch(changeValue({ [name] : value }));
     }
 
     // Screen 1
@@ -116,7 +112,12 @@ const Left = () => {
     }
 
     return (
-        <Style>
+        <>
+        <StyledLogo className="logo">
+            <img src={require("../assets/logo.png")} width="150"/>
+        </StyledLogo>
+        <Style sub_stage={ sub_stage }>
+            
             <header>
                 <button onClick={ () => dispatch(reset()) }> <i className="fas fa-circle-notch"></i> Start again </button>
             </header>
@@ -150,10 +151,10 @@ const Left = () => {
                         </div>
                     </div>
                     <div className="lower">
-                        <input type="range" min="0" step="10" max="1000" value="300" className="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
+                        <input type="range" min="0" step="10" max={ capacity } value="300" className="slider red-green" value={ utilization } onChange={ e => changeValueHandler( 'utilization', parseInt(e.target.value))}/>
                         {
                             Math.floor((utilization / capacity) * 100) != NaN && 
-                            <span className="utilization"> { Math.floor((utilization / capacity) * 100) }% utilization </span>
+                            <span className="utilization"> { utilization_percentage }% utilization </span>
                         }
                     </div>
                 </div>
@@ -342,7 +343,7 @@ const Left = () => {
                         </div>
                         <div className="tile-right">
                             <span className="tile-small"> target achieved: 10-15% </span>
-                            <span className="tile-large"> 10/20 <span className="tile-small">meal kits</span> </span>
+                            <span className="tile-large"> {(Math.floor( mealKitsPerDay * 0.1 ))} - {(Math.floor( mealKitsPerDay * 0.15 ))} <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
                     <div className={ phase === 2 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 2 ) }>
@@ -352,7 +353,7 @@ const Left = () => {
                         </div>
                         <div className="tile-right">
                             <span className="tile-small"> target achieved: 15-50% </span>
-                            <span className="tile-large"> 20/50 <span className="tile-small">meal kits</span> </span>
+                            <span className="tile-large"> {(Math.floor( mealKitsPerDay * 0.15 ))} - {(Math.floor( mealKitsPerDay * 0.5 ))} <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
                     <div className={ phase === 3 ? 'tile active' : 'tile' } onClick={ () => changeValueHandler( 'phase', 3 ) }>
@@ -361,13 +362,19 @@ const Left = () => {
                             <span className="tile-large"> Sprint </span>
                         </div>
                         <div className="tile-right">
-                            <span className="tile-small"> target achieved: 50-80% </span>
-                            <span className="tile-large"> 50/100 <span className="tile-small">meal kits</span> </span>
+                            <span className="tile-small"> target achieved: 50-100% </span>
+                            <span className="tile-large"> {(Math.floor( mealKitsPerDay * 0.5 ))} - {(Math.floor( mealKitsPerDay * 1 ))} <span className="tile-small">meal kits</span> </span>
                         </div>
                     </div>
                 </div>
             </div>
+            <footer>
+                <button hidden={ sub_stage === 0 } onClick={ () => dispatch(prevSubStage()) }>Back</button>
+                <button hidden={ sub_stage === last_stage } onClick={ () => dispatch(nextSubStage()) }>Next</button>
+                <button hidden={ sub_stage !== last_stage } onClick={ () => dispatch(nextStage()) }>Send me Report</button>
+            </footer>
         </Style>
+        </>
     );
 }
 
@@ -377,6 +384,10 @@ const Style = styled.div`
     background: #121E33;
     min-height: 100vh;
     padding: 20px 50px;
+
+    @media (max-width: 768px) {
+        padding: 50px 10px;
+    }
 
     header {
         text-align: right;
@@ -409,6 +420,15 @@ const Style = styled.div`
             justify-content: space-between;
             margin-bottom: 20px;
             align-items: baseline;
+
+            @media (max-width: 768px) {
+                flex-direction: column;
+
+                .selector {
+                    margin-top: 10px;
+                    font-size: 14px;
+                }
+            }
 
             .selector {
                 background-color: #1d2b44;
@@ -578,6 +598,10 @@ const Style = styled.div`
                 font-weight: light;
                 color: #44496b;
                 text-align: center;
+
+                @media (max-width: 768px) {
+                  display: none;
+                }
             }
 
             .value {
@@ -602,6 +626,10 @@ const Style = styled.div`
 
                 .tile-large {
                     font-size: 28px;
+
+                    @media (max-width: 768px) {
+                        font-size: 24px;
+                    }
                 }
             }
 
@@ -619,4 +647,38 @@ const Style = styled.div`
             margin-top: 20px!important;
         }
     }
+
+    footer {
+        margin-top: 50px;
+        width: -webkit-fill-available;
+        display: none;
+        justify-content: ${ props => props.sub_stage === 0 ? 'flex-end' : 'space-between' };
+
+        @media (max-width: 768px) {
+            display: flex;
+        }
+
+        button {
+            padding: 10px;
+            background: #8ac03b;
+            color: #fff;
+            text-transform: uppercase;
+            border: none;
+
+            &:nth-child(2) {
+                margin-left: 10px;
+            }
+
+            &:hover {
+                cursor: pointer;
+            }
+        }
+    }
+`
+
+const StyledLogo = styled.div`
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    z-index: 1;
 `

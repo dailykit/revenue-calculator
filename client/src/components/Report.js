@@ -43,6 +43,9 @@ const Report = () => {
 
     return (
         <Style>
+            <StyledLogo className="logo">
+                <img src={require("../assets/logo.png")} width="150"/>
+            </StyledLogo>
             <h2> Great! Your report is ready... </h2>
             <p>Begin today your journey with our report! <br /> Fill the form and we will email your report to you shortly. </p>
             <div className="form">
@@ -80,9 +83,17 @@ const Style = styled.div`
     color: #cecece;
     text-align: center;
 
+    @media (max-width: 768px) {
+        padding: 60px 10px;
+    }
+
     h2 {
         font-size: 48px;
         margin-bottom: 16px;
+
+        @media (max-width: 768px) {
+            font-size: 32px;
+        }
     }
 
     p {
@@ -128,4 +139,13 @@ const Style = styled.div`
     .error {
         color: #C04169;
     }
+`
+
+const StyledLogo = styled.div`
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    z-index: 1;
 `

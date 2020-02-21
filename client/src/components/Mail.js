@@ -4,6 +4,9 @@ import styled from 'styled-components';
 const Mail = () => {
     return (
         <Style>
+            <StyledLogo className="logo">
+                <img src={require("../assets/logo.png")} width="150"/>
+            </StyledLogo>
             <i class="far fa-paper-plane"></i>
             <h2>Mail Sent!</h2>
             <p className="help-text">Please check your spam incase you don't find it.</p>
@@ -26,12 +29,24 @@ const Style = styled.div`
     flex-direction: column;
     color: #cecece;
 
+    @media (max-width: 768px) {
+        padding: 50px 10px;
+    }
+
     i {
         font-size: 3rem;
+
+        @media (max-width: 768px) {
+            font-size: 2rem;
+        }
     }
 
     h2 {
         font-size: 48px;
+
+        @media (max-width: 768px) {
+            font-size: 32px;
+        }
     }
 
     p {
@@ -58,4 +73,13 @@ const Style = styled.div`
             cursor: pointer;
         }
     }
+`
+
+const StyledLogo = styled.div`
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    text-align: center;
+    z-index: 1;
 `

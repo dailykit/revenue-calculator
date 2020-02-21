@@ -7,7 +7,7 @@ import { nextSubStage, nextStage, prevSubStage } from '../state/actions';
 const Right = () => {
 
     const dispatch = useDispatch();
-    const { sub_stage, last_stage, phase, revenue, profit, utilization, capacity, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
+    const { sub_stage, last_stage, phase, revenue, profit, utilization, utilization_percentage, capacity, mealKitsPerDay, recommendedPrice } = useSelector(state => state);
 
     const [new_revenue, set_new_revenue] = React.useState(0);
     const [new_profit, set_new_profit] = React.useState(0);
@@ -29,9 +29,9 @@ const Right = () => {
     return (
         <Style sub_stage={ sub_stage + 1 } expand={ expand }>
             <header>
-                <span> Input </span>
-                <span> Your Earnings </span>
-                <span> Key to start </span>
+                <span onClick={ () => dispatch({ type : 'CUSTOM_SUB_STAGE', payload : { sub_stage : 0 } }) }> Input </span>
+                <span onClick={ () => dispatch({ type : 'CUSTOM_SUB_STAGE', payload : { sub_stage : 1 } }) }> Your Earnings </span>
+                <span onClick={ () => dispatch({ type : 'CUSTOM_SUB_STAGE', payload : { sub_stage : 2 } }) }> Key to start </span>
             </header>
             <main hidden={ sub_stage !== 0 }>
                 <h1> Revenue Calculator </h1>
@@ -45,7 +45,6 @@ const Right = () => {
                         <span>${ revenue >= 1000 ? (revenue / 1000).toFixed(1) + 'M' : revenue + 'k' } <i className="fas fa-times-circle" /></span>
                         <span>${ new_revenue >= 1000 ? (new_revenue / 1000).toFixed(1) + 'M' : new_revenue + 'k' }</span>
                         <span><i className="fas fa-arrow-up" />{ (((new_revenue - revenue) / revenue) * 100).toFixed(2) }%</span>
-                        <span> <i className="fas fa-plus" onClick={ () => setExpand(1) }/> </span>
                     </div>
                     <div className="info-row row-1">
                         <p>
@@ -57,7 +56,6 @@ const Right = () => {
                         <span>{ profit }% <i className="fas fa-times-circle" /></span>
                         <span>{ new_profit }% </span>
                         <span><i className="fas fa-arrow-up" /> { new_profit - profit } %</span>
-                        <span> <i className="fas fa-plus" onClick={ () => setExpand(2) }/> </span>
                     </div>
                     <div className="info-row row-2">
                         <p>
@@ -65,11 +63,10 @@ const Right = () => {
                         </p>
                     </div>
                     <div className="table-row">
-                        <span>Capacity utilization</span>
-                        <span>{ Math.floor((utilization / capacity) * 100) }% <i className="fas fa-times-circle" /></span>
+                        <span>Utilization</span>
+                        <span>{ utilization_percentage }% <i className="fas fa-times-circle" /></span>
                         <span>{ Math.floor(((utilization + mealKitsPerDay) / capacity) * 100) }%</span>
                         <span> <i className="fas fa-arrow-up" /> { Math.floor(((utilization + mealKitsPerDay) / capacity) * 100) - Math.floor((utilization / capacity) * 100) } %</span>
-                        <span> <i className="fas fa-plus" onClick={ () => setExpand(3) }/> </span>
                     </div>
                     <div className="info-row row-3">
                         <p>
@@ -86,7 +83,7 @@ const Right = () => {
                     </div>
                     <div className="tile-right">
                         <span className="tile-small"> target achieved: 10-15% </span>
-                        <span className="tile-large"> 10/20 <span className="tile-small">meal kits</span> </span>
+                        <span className="tile-large"> {(Math.floor( mealKitsPerDay * 0.1 ))} - {(Math.floor( mealKitsPerDay * 0.15 ))} <span className="tile-small">meal kits</span> </span>
                     </div>
                 </div>
                 <div className={ phase === 2 ? 'tile active' : 'tile' }>
@@ -96,7 +93,7 @@ const Right = () => {
                     </div>
                     <div className="tile-right">
                         <span className="tile-small"> target achieved: 15-50% </span>
-                        <span className="tile-large"> 20/50 <span className="tile-small">meal kits</span> </span>
+                        <span className="tile-large"> {(Math.floor( mealKitsPerDay * 0.15 ))} - {(Math.floor( mealKitsPerDay * 0.5 ))} <span className="tile-small">meal kits</span> </span>
                     </div>
                 </div>
                 <div className={ phase === 3 ? 'tile active' : 'tile' }>
@@ -105,8 +102,8 @@ const Right = () => {
                         <span className="tile-large"> Sprint </span>
                     </div>
                     <div className="tile-right">
-                        <span className="tile-small"> target achieved: 50-80% </span>
-                        <span className="tile-large"> 50/100 <span className="tile-small">meal kits</span> </span>
+                        <span className="tile-small"> target achieved: 50-100% </span>
+                        <span className="tile-large"> {(Math.floor( mealKitsPerDay * 0.5 ))} - {(Math.floor( mealKitsPerDay * 1 ))} <span className="tile-small">meal kits</span> </span>
                     </div>
                 </div>
                 <div className={ phase === 1 ? 'content active' : 'content' }>
@@ -186,13 +183,17 @@ const Right = () => {
 export default Right;
 
 const Style = styled.div(
-    ({ sub_stage, expand }) => `
+    ({ sub_stage }) => `
     background: #fff;
     min-height: 100vh;
     padding: 20px 50px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
+    @media (max-width: 768px) {
+        padding: 10px;
+    }
 
     header {
         display: flex;
@@ -202,6 +203,7 @@ const Style = styled.div(
             font-size: 14px;
             color: #1d2b44;
             padding: 5px 0;
+            cursor: pointer;
         
             &:nth-child(${ sub_stage }) {
                 font-weight: bold;
@@ -212,12 +214,22 @@ const Style = styled.div(
 
     main {
         color: #1d2b44;
-        flex: ${ sub_stage === 3 ? '1' : 'none' };
+        padding: 50px 0;
+        flex: ${ sub_stage !== 1 ? '1' : 'none' };
+
+        @media (max-width: 768px) {
+            flex: 1;
+            padding: ${ sub_stage === 1 ? '100px 0px' : '20px 0px' };
+        }
 
         h1 {
             font-size: 48px;
             margin-bottom: 20px;
             font-weight: normal;
+
+            @media (max-width: 768px) {
+                font-size: 32px;
+            }
         }
 
         h2 {
@@ -243,16 +255,28 @@ const Style = styled.div(
                         color: #1d2b44;
                         font-weight: 500;
                         min-width: 150px;
+
+                        @media (max-width: 768px) {
+                            min-width: 0;
+                        }
                     }
                     
                     &:nth-child(2) {
                         font-size: 20px;
                         color: #1d2b44;
                         font-weight: 500;
-                        
+
                         i {
                             font-size: 16px;
                             color: #ce2828;
+                        }
+
+                        @media (max-width: 768px) {
+                            font-size: 14px;
+
+                            i {
+                                font-size: 12px;
+                            }
                         }
                     }
 
@@ -260,6 +284,11 @@ const Style = styled.div(
                         font-size: 20px;
                         color: #8ac03b;
                         font-weight: 500;
+
+                        @media (max-width: 768px) {
+                            font-size: 14px;
+                        }
+
                     }
 
                     &:nth-child(4) {
@@ -283,6 +312,8 @@ const Style = styled.div(
                 text-align: justify;
                 background: #efefef;
                 position: relative;
+                display: block;
+                margin: 12px 0;
 
                 &::before {
                     content: '';
@@ -297,18 +328,6 @@ const Style = styled.div(
                 p {
                     font-weight: 400;
                     font-size: 14px;
-                }
-
-                &.row-1 {
-                    display: ${ expand == 1 ? 'block' : 'none' };
-                }
-                
-                &.row-2 {
-                    display: ${ expand == 2 ? 'block' : 'none' };
-                }
-
-                &.row-3 {
-                    display: ${ expand == 3 ? 'block' : 'none' };
                 }
             }
         }
@@ -370,6 +389,10 @@ const Style = styled.div(
         width: -webkit-fill-available;
         display: flex;
         justify-content: ${ sub_stage === 1 ? 'flex-end' : 'space-between' };
+
+        @media (max-width: 768px) {
+            display: none;
+        }
 
         button {
             padding: 13px 50px;

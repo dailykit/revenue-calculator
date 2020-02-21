@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import { Left, Right } from '.';
+import { Left, Right, Logo } from '.';
 
 const Calculator = () => {
     return (
@@ -20,8 +20,14 @@ export default Calculator;
 
 const Style = styled.div`
     display: flex;
-    
+    position: relative;
+
+    @media (max-width: 768px) {
+        flex-direction: column-reverse;
+    }
+
     .left, .right {
         flex: 1;
+        position: relative;
     }
 `
