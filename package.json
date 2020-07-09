@@ -4,6 +4,8 @@
   "description": "",
   "main": "app.js",
   "scripts": {
+    "start": "node app.js",
+    "heroku-postbuild": "cd client && npm install --only=dev && npm install && npm run build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Sanjeev Sharma",
@@ -14,5 +16,8 @@
     "morgan": "^1.9.1",
     "nodemailer": "^6.4.2",
     "pdfkit": "^0.11.0"
+  },
+  "engines": {
+    "node": "10.x"
   }
 }
