@@ -11,7 +11,7 @@ app.use(express.json());
 
 app.use(express.static(path.join(__dirname, '/client/build')));
 
-app.use('/mail', async (req, res) => {
+app.use('/mail', async (req, res, next) => {
   try {
     const data = {
       ...req.body,
@@ -22,17 +22,24 @@ app.use('/mail', async (req, res) => {
       ),
     };
     await utils.createReport(data, req.body.name);
-    const success = await utils.sendMail(req.body.email, req.body.name);
-    if (success) res.json({ success: true, message: 'Mail sent!' });
-    else throw Error('Some error occured!');
-  } catch (e) {
-    console.log(e);
-    res.json({ success: false, message: e.message, data: null });
+    await utils.sendMail(req.body.email, req.body.name);
+    return res.json({ success: true, message: 'Mail sent!' });
+  } catch (error) {
+    return next(error);
   }
 });
 
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', '/client/build/index.html'));
+  res.sendFile(path.join(__dirname, '/client/build/index.html'));
+});
+
+app.use((error, req, res, next) => {
+  res.status(500);
+  res.json({
+    success: false,
+    message: error.message,
+    data: null,
+  });
 });
 
 const port = process.env.PORT || 1337;

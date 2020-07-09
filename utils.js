@@ -183,40 +183,35 @@ const createReport = async (data, name) => {
 };
 
 const sendMail = async (email, name) => {
-  try {
-    let transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: {
-        type: 'Oauth2',
-        user: process.env.GMAIL_ID,
-        clientId: process.env.CLIENT_ID,
-        clientSecret: process.env.CLIENT_SECRET,
-        refreshToken: process.env.REFRESH_TOKEN,
-        accessToken: process.env.ACCESS_TOKEN,
+  let transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 465,
+    secure: true,
+    auth: {
+      type: 'Oauth2',
+      user: process.env.GMAIL_ID,
+      clientId: process.env.CLIENT_ID,
+      clientSecret: process.env.CLIENT_SECRET,
+      refreshToken: process.env.REFRESH_TOKEN,
+      accessToken: process.env.ACCESS_TOKEN,
+    },
+  });
+
+  let info = await transporter.sendMail({
+    from: process.env.GMAIL_ID,
+    to: email,
+    subject: `Hey ${name}`,
+    text: `Thank you for showing interest in DailyKIT. Here's your report!`,
+    attachments: [
+      {
+        path: `./tmp/${name}_MealKitReport.pdf`,
       },
-    });
+    ],
+  });
 
-    let info = await transporter.sendMail({
-      from: process.env.GMAIL_ID,
-      to: email,
-      subject: `Hey ${name}`,
-      text: `Thank you for showing interest in DailyKIT. Here's your report!`,
-      attachments: [
-        {
-          path: `./tmp/${name}_MealKitReport.pdf`,
-        },
-      ],
-    });
+  console.log('Message sent: %s', info.messageId);
 
-    console.log('Message sent: %s', info.messageId);
-
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
-    return true;
-  } catch (e) {
-    return false;
-  }
+  console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 };
 
 module.exports = {
